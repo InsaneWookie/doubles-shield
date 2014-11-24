@@ -22,8 +22,6 @@ angular.module('doublesShieldApp')
     $scope.teamA = [];
     $scope.teamB = [];
 
-    $scope.maxRank = null;
-
     $http.get(rivlBaseUrl + 'vs_api/competition/competitors?competition_id=2').success(function(competitors){
 
       var activeCompetitors = [];

@@ -2,10 +2,17 @@
 <div class="row">
   <div class="col-md-6">
     <h2>Team A</h2>
-    <table class="table">
-      <tr><td>Rank Handicap:</td><td>{{rankHandicapA}}</td></tr>
-      <tr><td>ELO Handicap:</td><td>{{eloHandicapA}}</td></tr>
+    <table>
+      <tr>
+        <td style="width:160px;"><h4>Rank Handicap:</h4></td>
+        <td><h4>{{rankHandicapA}}</h4></td>
+      </tr>
+      <tr>
+        <td style="width:160px;"><h4>ELO Handicap:</h4></td>
+        <td><h4>{{eloHandicapA}}</h4></td>
+      </tr>
     </table>
+    <br />
     <table class="table" >
       <tr><th>Rank</th><th>Name</th></tr>
       <tr ng-repeat='comp in teamA' style="cursor: pointer;" ng-class="{'bg-primary': comp.selected}" ng-click="selectPlayer(1, comp)">
@@ -16,10 +23,17 @@
   </div>
   <div class="col-md-6">
     <h2>Team B</h2>
-    <table class="table">
-      <tr><td>Rank Handicap:</td><td>{{rankHandicapB}}</td></tr>
-      <tr><td>ELO Handicap:</td><td>{{eloHandicapB}}</td></tr>
+    <table>
+      <tr>
+        <td style="width:160px;"><h4>Rank Handicap:</h4></td>
+        <td><h4>{{rankHandicapB}}</h4></td>
+      </tr>
+      <tr>
+        <td style="width:160px;"><h4>ELO Handicap:</h4></td>
+        <td><h4>{{eloHandicapB}}</h4></td>
+      </tr>
     </table>
+    <br />
     <table class="table">
       <tr><th>Rank</th><th>Name</th></tr>
       <tr ng-repeat='comp in teamB' style="cursor: pointer;" ng-class="{'bg-primary': comp.selected}" ng-click="selectPlayer(2, comp)">
