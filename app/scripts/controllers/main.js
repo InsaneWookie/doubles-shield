@@ -18,6 +18,8 @@ angular.module('doublesShieldApp')
     $scope.rankHandicapB = 0;
     $scope.eloHandicapA = 0;
     $scope.eloHandicapB = 0;
+    $scope.winPercentA = 0;
+    $scope.winPercentB = 0;
 
     $scope.teamA = [];
     $scope.teamB = [];
@@ -32,9 +34,9 @@ angular.module('doublesShieldApp')
         }
       });
 
-    	$scope.teamA = activeCompetitors.sort(function(a,b){ return a.activeRank - b.activeRank; });
+      $scope.teamA = activeCompetitors.sort(function(a,b){ return a.activeRank - b.activeRank; });
 
-    	$scope.teamB = angular.copy(activeCompetitors);
+      $scope.teamB = angular.copy(activeCompetitors);
     });
 
 
@@ -61,6 +63,7 @@ angular.module('doublesShieldApp')
 
       if(allSelectedFunc()){
         calculateHandicap();
+        fetchCompetitorDetail();
       } else {
         $scope.handicap = null;
         $scope.handicapedTeam = '';
@@ -120,6 +123,43 @@ angular.module('doublesShieldApp')
         $scope.eloHandicapB = 0;
       }
 
+    }
+
+    function getSelectedPlayers(player) {
+        return player.selected;
+    }
+
+    function fetchCompetitorDetail() {
+      var competitor1 = false;
+      var competitor2 = false;
+      var teamA = $scope.teamA.filter(getSelectedPlayers);
+
+      $http.get(rivlBaseUrl + 'vs_api/competitor_graph?competition_id=2&competitor_id=' + teamA[0].competitor_id).success(function(result){
+        if (competitor2) calculateWinPercent(result, competitor2);
+        competitor1 = result;
+      });
+      $http.get(rivlBaseUrl + 'vs_api/competitor_graph?competition_id=2&competitor_id=' + teamA[1].competitor_id).success(function(result){
+        if (competitor1) calculateWinPercent(competitor1, result);
+        competitor2 = result;
+      });
+    }
+
+    function calculateWinPercent(playerA1, playerA2){
+
+        var teamB = $scope.teamB.filter(getSelectedPlayers);
+
+        console.log('stats for: ' + playerA1.playerName);
+        playerA1.stat_details.stat_array.forEach(function(opponentStats) {
+            if (opponentStats.opponent_id == teamB[0].competitor_id || opponentStats.opponent_id == teamB[1].competitor_id) {
+                console.log(opponentStats.opponent_name + ": " + opponentStats.gamePercent);
+            }
+        });
+        console.log('stats for: ' + playerA2.playerName);
+        playerA2.stat_details.stat_array.forEach(function(opponentStats) {
+            if (opponentStats.opponent_id == teamB[0].competitor_id || opponentStats.opponent_id == teamB[1].competitor_id) {
+                console.log(opponentStats.opponent_name + ": " + opponentStats.gamePercent);
+            }
+        });
     }
 
   });
