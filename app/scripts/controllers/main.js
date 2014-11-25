@@ -10,9 +10,9 @@
 angular.module('doublesShieldApp')
   .controller('MainCtrl', function ($scope, $http) {
 
-    //var rivlBaseUrl = 'http://localhost:8090/';
+    var rivlBaseUrl = 'http://localhost:8090/';
     //var rivlBaseUrl = 'http://localhost/rivl/';
-    var rivlBaseUrl = 'http://rivl.kitomba.net/';
+    //var rivlBaseUrl = 'http://rivl.kitomba.net/';
 
     $scope.rankHandicapA = 0;
     $scope.rankHandicapB = 0;
@@ -186,7 +186,7 @@ angular.module('doublesShieldApp')
         });
 
         //get the diffs between handicap and actual win percent for each player combination and average them
-        var calc = (((winPercentA1vB1 - eloHandicapA1vB1) + (winPercentA1vB2 - eloHandicapA1vB2) 
+        var calc = (((winPercentA1vB1 - eloHandicapA1vB1) + (winPercentA1vB2 - eloHandicapA1vB2)
                                 + (winPercentA2vB1 - eloHandicapA2vB1) + (winPercentA2vB2 - eloHandicapA2vB2)) / 4) + 0.5;
         $scope.winPercentA = Math.round(calc * 100);
         $scope.winPercentB = Math.round((1 - calc) * 100);

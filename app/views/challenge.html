@@ -1,0 +1,42 @@
+<div class="row">
+  <!--<div class="col-md-6">-->
+    <!--<img class="leaderboardAvatar" ng-src="{{comp.playerImage}}"/>-->
+  <!--</div>-->
+  <!--<div class="col-md-6">-->
+    <!--<img class="leaderboardAvatar" ng-src="{{comp.playerImage}}"/>-->
+  <!--</div>-->
+  <h1 class="text-center">Current Shield Holders</h1>
+  <div id="playerSection" class="row text-center" style="padding-bottom: 50px">
+    <div class="col-xs-6">
+      <img ng-if="defenders.player1" ng-src="{{defenders.player1.playerImage}}"/>
+    </div>
+    <div class="col-xs-6 text-center">
+      <img ng-if="defenders.player2" ng-src="{{defenders.player2.playerImage}}"/>
+    </div>
+  </div>
+</div>
+
+  <div class="row" style="margin-bottom: 20px">
+      <button class="btn btn-default center-block" ng-click="addTeam()">Add Challenge</button>
+  </div>
+
+
+<div class="row" style="margin-bottom: 20px">
+  <table class="table">
+    <tr><th>Player 1</th><th>Player 2</th></tr>
+    <tr ng-repeat="challengeTeam in challengers">
+      <td style="vertical-align: middle"><img class="leaderboardAvatar" ng-src="{{challengeTeam.player1.playerImage}}"/>{{challengeTeam.player1.name}}</td>
+      <td style="vertical-align: middle"><img class="leaderboardAvatar" ng-src="{{challengeTeam.player2.playerImage}}"/>{{challengeTeam.player2.name}}</td>
+    </tr>
+  </table>
+</div>
+
+<div class="row">
+  <table class="table">
+    <tr><th>Rank</th><th>Name</th></tr>
+    <tr ng-repeat='comp in team' style="cursor: pointer;" ng-class="{'bg-primary': comp.selected}" ng-click="selectPlayer(comp)">
+      <td style="vertical-align: middle">{{comp.activeRank}}</td>
+      <td style="vertical-align: middle"><img class="leaderboardAvatar" ng-src="{{comp.playerImage}}"/> {{comp.name}} </td>
+    </tr>
+  </table>
+</div>

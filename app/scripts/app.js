@@ -9,4 +9,19 @@
  * Main module of the application.
  */
 angular
-  .module('doublesShieldApp', []);
+  .module('doublesShieldApp', ['ngRoute'])
+  .config(['$routeProvider', function($routeProvider) {
+    $routeProvider
+      .when('/', {
+        templateUrl: 'views/main.html',
+        controller: 'MainCtrl'
+      })
+      .otherwise({
+        redirectTo: '/'
+      })
+      .when('/challenge', {
+        templateUrl: 'views/challenge.html',
+        controller: 'ChallengeCtrl'
+      });
+  }]);
+
