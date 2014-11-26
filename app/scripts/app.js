@@ -9,7 +9,7 @@
  * Main module of the application.
  */
 angular
-  .module('doublesShieldApp', ['ngRoute'])
+  .module('doublesShieldApp', ['ngRoute', 'firebase'])
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider
       .when('/', {

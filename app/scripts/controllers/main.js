@@ -10,9 +10,9 @@
 angular.module('doublesShieldApp')
   .controller('MainCtrl', function ($scope, $http) {
 
-    var rivlBaseUrl = 'http://localhost:8090/';
+    //var rivlBaseUrl = 'http://localhost:8090/';
     //var rivlBaseUrl = 'http://localhost/rivl/';
-    //var rivlBaseUrl = 'http://rivl.kitomba.net/';
+    var rivlBaseUrl = 'http://rivl.kitomba.net/';
 
     $scope.rankHandicapA = 0;
     $scope.rankHandicapB = 0;
