@@ -45,9 +45,9 @@ angular.module('doublesShieldApp')
 
       //calculate max rank and elo diffs (assume $scope.teamA is already ordered by rank and has more than 2 active players)
       $scope.maxRank = $scope.teamA.length;
-      $scope.maxRankDiff = ($scope.maxRank + $scope.maxRank - 1) - (1+2);
+      $scope.maxRankDiff = ($scope.maxRank + $scope.maxRank - 1) - (1+2) + 1;
       $scope.maxEloDiff = (parseFloat($scope.teamA[0].elo) + parseFloat($scope.teamA[1].elo))
-                            - (parseFloat($scope.teamA[$scope.maxRank-2].elo) + parseFloat($scope.teamA[$scope.maxRank-1].elo));
+                            - (parseFloat($scope.teamA[$scope.maxRank-2].elo) + parseFloat($scope.teamA[$scope.maxRank-1].elo) - 100);
 
     });
 
@@ -112,8 +112,8 @@ angular.module('doublesShieldApp')
       teamARank = teamA[0].activeRank + teamA[1].activeRank;
       teamBRank = teamB[0].activeRank + teamB[1].activeRank;
 
-      teamAElo = (parseFloat(teamA[0].elo) * 0.5) + (parseFloat(teamA[1].elo) * 1.5);
-      teamBElo = (parseFloat(teamB[0].elo) * 0.5) + (parseFloat(teamB[1].elo) * 1.5);
+      teamAElo = (parseFloat(teamA[0].elo) * 1) + (parseFloat(teamA[1].elo) * 1);
+      teamBElo = (parseFloat(teamB[0].elo) * 1) + (parseFloat(teamB[1].elo) * 1);
 
       if(teamARank < teamBRank){
         $scope.rankHandicapB = Math.round((teamBRank - teamARank) / $scope.maxRankDiff * $scope.maxHandicap);
@@ -156,15 +156,12 @@ angular.module('doublesShieldApp')
         var teamA = $scope.teamA.filter(getSelectedPlayers);
         var teamB = $scope.teamB.filter(getSelectedPlayers);
 
-        //normalise elo diff to somewhere between 0 and 1 where 0.5 means the two players are even
-        var eloHandicapA1vB1 = ((teamA[0].elo - teamB[0].elo) / $scope.maxEloDiff / 2) + 0.5;
-        var eloHandicapA1vB2 = ((teamA[0].elo - teamB[1].elo) / $scope.maxEloDiff / 2) + 0.5;
-        var eloHandicapA2vB1 = ((teamA[1].elo - teamB[0].elo) / $scope.maxEloDiff / 2) + 0.5;
-        var eloHandicapA2vB2 = ((teamA[1].elo - teamB[1].elo) / $scope.maxEloDiff / 2) + 0.5;
-        var winPercentA1vB1 = eloHandicapA1vB1;
-        var winPercentA1vB2 = eloHandicapA1vB2;
-        var winPercentA2vB1 = eloHandicapA2vB1;
-        var winPercentA2vB2 = eloHandicapA2vB2;
+        //normalise elo diff to somewhere between 0 and 1 where 0.5 means the two teams are even
+        var teamAHandicap = 1 - ((($scope.eloHandicapA - $scope.eloHandicapB) / $scope.maxHandicap * 0.5) + 0.5);
+        var winPercentA1vB1 = teamAHandicap;
+        var winPercentA1vB2 = teamAHandicap;
+        var winPercentA2vB1 = teamAHandicap;
+        var winPercentA2vB2 = teamAHandicap;
 
         playerA1.stat_details.stat_array.forEach(function(opponentStats) {
             if (opponentStats.opponent_id == teamB[0].competitor_id) {
@@ -186,15 +183,17 @@ angular.module('doublesShieldApp')
         });
 
         //get the diffs between handicap and actual win percent for each player combination and average them
-        var calc = (((winPercentA1vB1 - eloHandicapA1vB1) + (winPercentA1vB2 - eloHandicapA1vB2)
-                                + (winPercentA2vB1 - eloHandicapA2vB1) + (winPercentA2vB2 - eloHandicapA2vB2)) / 4) + 0.5;
-        $scope.winPercentA = Math.round(calc * 100);
-        $scope.winPercentB = Math.round((1 - calc) * 100);
+        var teamAWinPercent = (winPercentA1vB1 + winPercentA1vB2 + winPercentA2vB1 + winPercentA2vB2) / 4;
+        var teamWinPredictor = teamAWinPercent - teamAHandicap + 0.5;
+        $scope.winPercentA = Math.round(teamWinPredictor * 100);
+        $scope.winPercentB = Math.round((1 - teamWinPredictor) * 100);
 
-        console.log(teamA[0].name + ' v ' + teamB[0].name + ' A1vB1 eloHandicap: ' + eloHandicapA1vB1 + ', winPercent' + winPercentA1vB1);
-        console.log(teamA[0].name + ' v ' + teamB[1].name + ' A1vB2 eloHandicap: ' + eloHandicapA1vB2 + ', winPercent' + winPercentA1vB2);
-        console.log(teamA[1].name + ' v ' + teamB[0].name + ' A2vB1 eloHandicap: ' + eloHandicapA2vB1 + ', winPercent' + winPercentA2vB1);
-        console.log(teamA[1].name + ' v ' + teamB[1].name + ' A2vB2 eloHandicap: ' + eloHandicapA2vB2 + ', winPercent' + winPercentA2vB2);
+        console.log(teamA[0].name + ' v ' + teamB[0].name + ' winPercent: ' + winPercentA1vB1);
+        console.log(teamA[0].name + ' v ' + teamB[1].name + ' winPercent: ' + winPercentA1vB2);
+        console.log(teamA[1].name + ' v ' + teamB[0].name + ' winPercent: ' + winPercentA2vB1);
+        console.log(teamA[1].name + ' v ' + teamB[1].name + ' winPercent: ' + winPercentA2vB2);
+        console.log('TeamA winPercent: ' + teamAWinPercent);
+        console.log('TeamA handicap: ' + teamAHandicap);
     }
 
   });
