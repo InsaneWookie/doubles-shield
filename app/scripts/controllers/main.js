@@ -8,11 +8,9 @@
  * Controller of the doublesShieldApp
  */
 angular.module('doublesShieldApp')
-  .controller('MainCtrl', function ($scope, $http) {
+  .controller('MainCtrl', function ($scope, $http, config) {
 
-    //var rivlBaseUrl = 'http://localhost:8090/';
-    //var rivlBaseUrl = 'http://localhost/rivl/';
-    var rivlBaseUrl = 'http://rivl.kitomba.net/';
+    var rivlBaseUrl = config.rivlUrl;
 
     $scope.rankHandicapA = 0;
     $scope.rankHandicapB = 0;

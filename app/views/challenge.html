@@ -8,12 +8,14 @@
 
     <div id="playerSection" class="row text-center" style="padding-bottom: 50px">
       <div class="col-xs-6">
-        <img ng-if="defenders.player1" ng-src="{{defenders.player1.playerImage}}"/>
+        <img ng-src="{{defenders.player1.playerImage}}"/>
       </div>
-      <div class="col-xs-6 text-center">
-        <img ng-if="defenders.player2" ng-src="{{defenders.player2.playerImage}}"/>
+      <div class="col-xs-6">
+        <img ng-src="{{defenders.player2.playerImage}}"/>
       </div>
+
     </div>
+
   </div>
 </div>
 
@@ -25,14 +27,22 @@
 <div class="row" style="margin-bottom: 20px">
   <table class="table">
     <tr>
+      <th></th>
       <th>Player 1</th>
       <th>Player 2</th>
+
     </tr>
     <tr ng-repeat="challengeTeam in challengers">
+      <td>
+        <button type="button" class="btn btn-danger" ng-click="removeTeam(challengeTeam)">
+          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        </button>
+      </td>
       <td style="vertical-align: middle"><img class="leaderboardAvatar" ng-src="{{challengeTeam.player1.playerImage}}"/>{{challengeTeam.player1.name}}
       </td>
       <td style="vertical-align: middle"><img class="leaderboardAvatar" ng-src="{{challengeTeam.player2.playerImage}}"/>{{challengeTeam.player2.name}}
       </td>
+
     </tr>
   </table>
 </div>

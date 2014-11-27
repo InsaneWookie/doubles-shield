@@ -8,19 +8,10 @@
  * Controller of the doublesShieldApp
  */
 angular.module('doublesShieldApp')
-  .controller('ChallengeCtrl', function ($scope, $http, $firebase) {
+  .controller('ChallengeCtrl', function ($scope, $http, $firebase, config) {
 
-    //var rivlBaseUrl = 'http://localhost:8090/';
-    //var rivlBaseUrl = 'http://localhost/rivl/';
-    var rivlBaseUrl = 'http://rivl.kitomba.net/';
-
-    var firebaseUrl = 'https://doubles-shield-dev.firebaseio.com';
-    //var firebaseUrl = 'https://fiery-inferno-5661.firebaseio.com';
-
-    //var defenders = {
-    //  player1: null,
-    //  player2: null
-    //};
+    var rivlBaseUrl = config.rivlUrl;
+    var firebaseUrl = config.firebaseUrl;
 
     $scope.challengers = [];
 
@@ -108,6 +99,10 @@ angular.module('doublesShieldApp')
       } else {
         $scope.challengers.$add(newTeam);
       }
+    };
+
+    $scope.removeTeam = function(teamToRemove){
+      $scope.challengers.$remove(teamToRemove);
     }
 
   });

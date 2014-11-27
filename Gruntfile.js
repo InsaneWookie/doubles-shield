@@ -15,6 +15,8 @@ module.exports = function (grunt) {
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
 
+  //grunt.loadNpmTasks('grunt-ng-constant');
+
   // Configurable paths for the application
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
@@ -351,6 +353,39 @@ module.exports = function (grunt) {
         configFile: 'test/karma.conf.js',
         singleRun: true
       }
+    },
+
+    ngconstant: {
+      options: {
+        name: 'config',
+        dest: 'config.js',
+        constants: {
+          //package: grunt.file.readJSON('package.json')
+        },
+        values: {
+         // debug: true
+        }
+      },
+      development: {
+        options: {
+          dest: '<%= yeoman.app %>/scripts/config.js'
+        },
+        constants: {
+          ENV: 'development',
+          config: grunt.file.readJSON('./config/development.json')
+        }
+      },
+      production: {
+        options: {
+          dest: '<%= yeoman.dist %>/scripts/config.js'
+        },
+        constants: {
+          ENV: 'production',
+          config: grunt.file.readJSON('./config/production.json')
+        }
+      },
+      build: {
+      }
     }
   });
 
@@ -362,6 +397,7 @@ module.exports = function (grunt) {
 
     grunt.task.run([
       'clean:server',
+      'ngconstant:development', //+ (process.env.NODE_ENV || 'development'),
       'wiredep',
       'concurrent:server',
       'autoprefixer',
@@ -405,4 +441,6 @@ module.exports = function (grunt) {
     'test',
     'build'
   ]);
+
+
 };
