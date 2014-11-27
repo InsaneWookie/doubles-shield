@@ -165,19 +165,19 @@ angular.module('doublesShieldApp')
 
         playerA1.stat_details.stat_array.forEach(function(opponentStats) {
             if (opponentStats.opponent_id == teamB[0].competitor_id) {
-                if (opponentStats.win_num + opponentStats.loss_num >= 5)
+                if (parseInt(opponentStats.win_num) + parseInt(opponentStats.loss_num) >= 5)
                   winPercentA1vB1 = opponentStats.win_percent / 100;
             } else if (opponentStats.opponent_id == teamB[1].competitor_id) {
-                if (opponentStats.win_num + opponentStats.loss_num >= 5)
+                if (parseInt(opponentStats.win_num) + parseInt(opponentStats.loss_num) >= 5)
                   winPercentA1vB2 = opponentStats.win_percent / 100;
             }
         });
         playerA2.stat_details.stat_array.forEach(function(opponentStats) {
             if (opponentStats.opponent_id == teamB[0].competitor_id) {
-                if (opponentStats.win_num + opponentStats.loss_num >= 5)
+                if (parseInt(opponentStats.win_num) + parseInt(opponentStats.loss_num) >= 5)
                   winPercentA2vB1 = opponentStats.win_percent / 100;
             } else if (opponentStats.opponent_id == teamB[1].competitor_id) {
-                if (opponentStats.win_num + opponentStats.loss_num >= 5)
+                if (parseInt(opponentStats.win_num) + parseInt(opponentStats.loss_num) >= 5)
                   winPercentA2vB2 = opponentStats.win_percent / 100;
             }
         });
@@ -192,7 +192,8 @@ angular.module('doublesShieldApp')
         console.log(teamA[0].name + ' v ' + teamB[1].name + ' winPercent: ' + winPercentA1vB2);
         console.log(teamA[1].name + ' v ' + teamB[0].name + ' winPercent: ' + winPercentA2vB1);
         console.log(teamA[1].name + ' v ' + teamB[1].name + ' winPercent: ' + winPercentA2vB2);
-        console.log('TeamA winPercent: ' + teamAWinPercent);
+        console.log('TeamA winPercent: ' + $scope.winPercentA);
+        console.log('TeamB winPercent: ' + $scope.winPercentB);
         console.log('TeamA handicap: ' + teamAHandicap);
     }
 
