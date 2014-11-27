@@ -20,11 +20,19 @@
 </div>
 
 <div class="row" style="margin-bottom: 20px">
-  <button class="btn btn-default center-block" ng-click="addTeam()">Add Challenge</button>
+
+  <div class="col-xs-4">
+    <button class="btn btn-default" ng-click="addTeam()">Add Challenge</button>
+  </div>
+  <div class="col-md-offset-4 col-xs-">
+    <button class="btn btn-danger pull-right" style="margin-right: 5px" ng-click="challengersLost()">Lost</button>
+    <button class="btn btn-success pull-right" style="margin-right: 5px" ng-click="challengersWon()">Won</button>
+  </div>
 </div>
 
 
 <div class="row" style="margin-bottom: 20px">
+  <h3 class="text-center">Challengers</h3>
   <table class="table">
     <tr>
       <th></th>

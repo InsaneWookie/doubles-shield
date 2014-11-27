@@ -86,6 +86,10 @@ angular.module('doublesShieldApp')
         return player.selected;
       });
 
+      if(selectedPlayers.length !== 2){
+        return;
+      }
+
       var newTeam = {
         player1: selectedPlayers[0],
         player2: selectedPlayers[1]
@@ -99,10 +103,27 @@ angular.module('doublesShieldApp')
       } else {
         $scope.challengers.$add(newTeam);
       }
+
+      selectedPlayers[0].selected = false;
+      selectedPlayers[1].selected = false;
     };
 
     $scope.removeTeam = function(teamToRemove){
       $scope.challengers.$remove(teamToRemove);
+    };
+
+
+    $scope.challengersWon = function(){
+      var currentChallengers = $scope.challengers[0];
+      $scope.defenders.player1 = currentChallengers.player1;
+      $scope.defenders.player2 = currentChallengers.player2;
+      $scope.defenders.$save();
+
+      $scope.removeTeam(currentChallengers);
+    };
+
+    $scope.challengersLost = function(){
+      $scope.removeTeam($scope.challengers[0])
     }
 
   });
