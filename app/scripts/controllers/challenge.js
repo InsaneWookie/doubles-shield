@@ -8,7 +8,7 @@
  * Controller of the doublesShieldApp
  */
 angular.module('doublesShieldApp')
-  .controller('ChallengeCtrl', function ($scope, $http, $firebase, config) {
+  .controller('ChallengeCtrl', function ($scope, $http, $firebase, config, handicapCalculator) {
 
     var rivlBaseUrl = config.rivlUrl;
     var firebaseUrl = config.firebaseUrl;
@@ -18,10 +18,7 @@ angular.module('doublesShieldApp')
     var challengersFB = new Firebase(firebaseUrl + '/challengers');
     var challangersSync = $firebase(challengersFB);
 
-    var challangers = challangersSync.$asArray();
-    $scope.challengers = challangers;
-
-
+    $scope.challengers = challangersSync.$asArray();
 
     var ref = new Firebase(firebaseUrl + '/defenders');
     var sync = $firebase(ref);
@@ -53,12 +50,7 @@ angular.module('doublesShieldApp')
         }
       });
 
-      $scope.team = activeCompetitors.sort(function(a,b){ return a.activeRank - b.activeRank; });
-
-      //$scope.defenders.player1 = competitors[0];
-      //$scope.defenders.player2 = competitors[1];
-      //
-      //$scope.defenders.$save();
+      $scope.competitors = activeCompetitors.sort(function(a,b){ return a.activeRank - b.activeRank; });
 
     });
 
@@ -72,9 +64,8 @@ angular.module('doublesShieldApp')
 
       if(player.selected){
         player.selected = false;
-
       } else {
-          player.selected = !$scope.team.some(canSelectedFunc);
+        player.selected = !$scope.competitors.some(canSelectedFunc);
       }
 
     };
@@ -82,7 +73,7 @@ angular.module('doublesShieldApp')
 
     $scope.addTeam = function(){
 
-      var selectedPlayers = $scope.team.filter(function(player){
+      var selectedPlayers = $scope.competitors.filter(function(player){
         return player.selected;
       });
 
@@ -92,7 +83,9 @@ angular.module('doublesShieldApp')
 
       var newTeam = {
         player1: selectedPlayers[0],
-        player2: selectedPlayers[1]
+        player2: selectedPlayers[1],
+        handicap: handicapCalculator.getHandicapElo(selectedPlayers[0].elo, selectedPlayers[1].elo,
+          $scope.defenders.player1.elo, $scope.defenders.player2.elo, handicapCalculator.getMaxEloDiff($scope.competitors))
       };
 
       if(!$scope.defenders.player1){ //see if we have any data
@@ -113,17 +106,20 @@ angular.module('doublesShieldApp')
     };
 
 
-    $scope.challengersWon = function(){
-      var currentChallengers = $scope.challengers[0];
-      $scope.defenders.player1 = currentChallengers.player1;
-      $scope.defenders.player2 = currentChallengers.player2;
+    $scope.challengersWon = function(challengersTeam){
+      //var currentChallengers = $scope.challengers[0];
+      $scope.defenders.player1 = challengersTeam.player1;
+      $scope.defenders.player2 = challengersTeam.player2;
       $scope.defenders.$save();
 
-      $scope.removeTeam(currentChallengers);
+      $scope.removeTeam(challengersTeam);
+
+      //TODO: need to re-calculate all the handicaps for the challengers as the defenders have changed
+      //There probably is a nice fancy $bind/$watch way of doing it
     };
 
-    $scope.challengersLost = function(){
-      $scope.removeTeam($scope.challengers[0])
+    $scope.challengersLost = function(challengersTeam){
+      $scope.removeTeam(challengersTeam)
     }
 
   });

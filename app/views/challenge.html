@@ -4,14 +4,18 @@
   </div>
 
   <div ng-if="defenders.player1">
-    <h1 class="text-center">Current Shield Holders</h1>
 
-    <div id="playerSection" class="row text-center" style="padding-bottom: 50px">
-      <div class="col-xs-6">
-        <img ng-src="{{defenders.player1.playerImage}}"/>
+    <div id="playerSection" class="row text-center" style="padding-bottom: 20px">
+      <div class="col-xs-4">
+        <img ng-src="{{defenders.player1.playerImage}}"/><br>
+        <h3>{{defenders.player1.name}}</h3>
       </div>
-      <div class="col-xs-6">
-        <img ng-src="{{defenders.player2.playerImage}}"/>
+      <div class="col-xs-4">
+        <img src="images/kshield-small.png" />
+      </div>
+      <div class="col-xs-4">
+        <img ng-src="{{defenders.player2.playerImage}}"/><br>
+        <h3>{{defenders.player2.name}}</h3>
       </div>
 
     </div>
@@ -19,16 +23,7 @@
   </div>
 </div>
 
-<div class="row" style="margin-bottom: 20px">
 
-  <div class="col-xs-4">
-    <button class="btn btn-default" ng-click="addTeam()">Add Challenge</button>
-  </div>
-  <div class="col-md-offset-4 col-xs-">
-    <button class="btn btn-danger pull-right" style="margin-right: 5px" ng-click="challengersLost()">Lost</button>
-    <button class="btn btn-success pull-right" style="margin-right: 5px" ng-click="challengersWon()">Won</button>
-  </div>
-</div>
 
 
 <div class="row" style="margin-bottom: 20px">
@@ -38,9 +33,9 @@
       <th></th>
       <th>Player 1</th>
       <th>Player 2</th>
-
+      <th>Handicap</th>
     </tr>
-    <tr ng-repeat="challengeTeam in challengers">
+    <tr class="challenge-animate" ng-repeat="challengeTeam in challengers" >
       <td>
         <button type="button" class="btn btn-danger" ng-click="removeTeam(challengeTeam)">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
@@ -50,9 +45,21 @@
       </td>
       <td style="vertical-align: middle"><img class="leaderboardAvatar" ng-src="{{challengeTeam.player2.playerImage}}"/>{{challengeTeam.player2.name}}
       </td>
-
+      <td>{{challengeTeam.handicap}}</td>
+      <td>
+        <button class="btn btn-danger pull-right" style="margin-right: 5px" ng-click="challengersLost(challengeTeam)">Lost</button>
+        <button class="btn btn-success pull-right" style="margin-right: 5px" ng-click="challengersWon(challengeTeam)">Won</button>
+      </td>
     </tr>
   </table>
+</div>
+
+<div class="row" style="margin-bottom: 20px">
+
+
+    <button class="btn btn-primary center-block"  ng-click="addTeam()">Add Challenge</button>
+
+
 </div>
 
 <div class="row">
@@ -61,7 +68,7 @@
       <th>Rank</th>
       <th>Name</th>
     </tr>
-    <tr ng-repeat='comp in team' style="cursor: pointer;" ng-class="{'bg-primary': comp.selected}"
+    <tr ng-repeat='comp in competitors' style="cursor: pointer;" ng-class="{'bg-primary': comp.selected}"
         ng-click="selectPlayer(comp)">
       <td style="vertical-align: middle">{{comp.activeRank}}</td>
       <td style="vertical-align: middle"><img class="leaderboardAvatar" ng-src="{{comp.playerImage}}"/> {{comp.name}}
