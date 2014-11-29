@@ -14,30 +14,21 @@ angular.module('doublesShieldApp')
     var firebaseUrl = config.firebaseUrl;
 
     $scope.challengers = [];
+    $scope.defenders = {};
 
     var challengersFB = new Firebase(firebaseUrl + '/challengers');
-    var challangersSync = $firebase(challengersFB);
+    $scope.challengers = $firebase(challengersFB).$asArray();
 
-    $scope.challengers = challangersSync.$asArray();
+    var defendersFB = new Firebase(firebaseUrl + '/defenders');
+    $scope.defenders = $firebase(defendersFB).$asObject();
 
-    var ref = new Firebase(firebaseUrl + '/defenders');
-    var sync = $firebase(ref);
-
-    // download the data into a local object
-    //$scope.defenders = sync.$asObject();
-    // synchronize the object with a three-way data binding
-    // click on `index.html` above to see it used in the DOM!
-    //defenders.$bindTo($scope, "defenders");
-    var obj = sync.$asObject();
-    obj.$loaded()
+    $scope.defenders.$loaded()
       .then(function(data) {
         console.log(data); // true
       })
       .catch(function(error) {
         console.error("Error:", error);
       });
-
-    $scope.defenders = obj;
 
 
     $http.get(rivlBaseUrl + 'vs_api/competition/competitors?competition_id=2').success(function(competitors){

@@ -21,7 +21,7 @@
       <tr><th>Rank</th><th>Name</th></tr>
       <tr ng-repeat='comp in teamA' style="cursor: pointer;" ng-class="{'bg-primary': comp.selected}" ng-click="selectPlayer(1, comp)">
         <td style="vertical-align: middle">{{comp.activeRank}}</td>
-        <td style="vertical-align: middle"> <img class="leaderboardAvatar" ng-src="{{comp.playerImage}}"/> {{comp.name}}</td>
+        <td style="vertical-align: middle"> <img class="avatar-small" ng-src="{{comp.playerImage}}"/> {{comp.name}}</td>
       </tr>
     </table>
   </div>
@@ -46,7 +46,7 @@
       <tr><th>Rank</th><th>Name</th></tr>
       <tr ng-repeat='comp in teamB' style="cursor: pointer;" ng-class="{'bg-primary': comp.selected}" ng-click="selectPlayer(2, comp)">
         <td style="vertical-align: middle">{{comp.activeRank}}</td>
-        <td style="vertical-align: middle"><img class="leaderboardAvatar" ng-src="{{comp.playerImage}}"/> {{comp.name}} </td>
+        <td style="vertical-align: middle"><img class="avatar-small" ng-src="{{comp.playerImage}}"/> {{comp.name}} </td>
       </tr>
     </table>
   </div>
