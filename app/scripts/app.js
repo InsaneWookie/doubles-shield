@@ -13,15 +13,15 @@ angular
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider
       .when('/', {
+        templateUrl: 'views/challenge.html',
+        controller: 'ChallengeCtrl'
+      })
+      .when('/compare', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
       .otherwise({
         redirectTo: '/'
-      })
-      .when('/challenge', {
-        templateUrl: 'views/challenge.html',
-        controller: 'ChallengeCtrl'
       });
   }]);
 

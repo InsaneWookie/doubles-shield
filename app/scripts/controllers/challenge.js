@@ -21,18 +21,12 @@ angular.module('doublesShieldApp')
     $scope.defendersLoaded = false;
 
     var challengersFB = new Firebase(firebaseUrl + '/challengers');
-    $scope.challengers = $firebase(challengersFB).$asArray();
+    var challengers = null; // $firebase(challengersFB).$asArray();
+    //$scope.challengers = $firebase(challengersFB).$asArray();
 
     var defendersFB = new Firebase(firebaseUrl + '/defenders');
-    $scope.defenders = $firebase(defendersFB).$asObject();
-
-    $scope.defenders.$loaded()
-      .then(function() {
-        $scope.defendersLoaded = true;
-      })
-      .catch(function(error) {
-        console.error("Error:", error);
-      });
+    var defenders = null; //$firebase(defendersFB).$asObject();
+    //$scope.defenders = $firebase(defendersFB).$asObject();
 
 
     $http.get(rivlBaseUrl + 'vs_api/competition/competitors?competition_id=2').success(function(competitors){
@@ -48,7 +42,81 @@ angular.module('doublesShieldApp')
 
       $scope.competitors = activeCompetitors.sort(function(a,b){ return a.activeRank - b.activeRank; });
 
+      //we only store the player id and use that to look up the full object from the rivl request
+      //this makes all the object references the same
+      defenders = $firebase(defendersFB).$asObject();
+      challengers = $firebase(challengersFB).$asArray();
+
+      function loadedErrorFunc(error){
+        console.error("Error:", error);
+      }
+
+      //function buildChallengers (eventData){
+      //  //find the players from the rivl data
+      //  //$scope.challengers = [];
+      //  //$scope.$apply();
+      //
+      //  //figure out what position it was added
+      //  if(eventData.event === 'child_added'){
+      //    var addedIndex = challengers.$indexFor(eventData.key);
+      //    var addedRecord = challengers.$getRecord(eventData.key);
+      //
+      //    $scope.challengers.splice(addedIndex, 0, {
+      //      player1: getPlayerById(addedRecord.player1.competitor_id),
+      //      player2: getPlayerById(addedRecord.player2.competitor_id)
+      //    })
+      //  }
+      //
+      //
+      //}
+
+      defenders.$loaded()
+        .then(function() {
+          $scope.defendersLoaded = true;
+          $scope.defenders.player1 = getPlayerById(defenders.player1.competitor_id);
+          $scope.defenders.player2 = getPlayerById(defenders.player2.competitor_id);
+          $scope.defenders.wins = defenders.wins;
+
+          //need to do the challengers after the defenders so we can calculate the elo correctly
+          challengers.$loaded()
+            .then(function(){
+              challengers.forEach(function(team){
+                $scope.challengers.push(
+                  {
+                    player1: getPlayerById(team.player1.competitor_id),
+                    player2: getPlayerById(team.player2.competitor_id)
+                  });
+              });
+
+              //calculate the elo based on the current rivl data
+              $scope.challengers.forEach(function(team){
+                team.handicap = handicapCalculator.getHandicapElo(team.player1.elo, team.player1.elo,
+                  $scope.defenders.player1.elo, $scope.defenders.player2.elo, handicapCalculator.getMaxEloDiff($scope.competitors));
+
+              });
+            })
+            .catch(loadedErrorFunc);
+
+        })
+        .catch(loadedErrorFunc);
+
+
+      //challengers.$watch(buildChallengers)
     });
+
+
+    function getPlayerById(playerId){
+      var foundPlayer = null;
+      $scope.competitors.some(function(player){
+        if(player.competitor_id == playerId){
+          foundPlayer = player;
+          return true;
+        }
+        return false;
+      });
+
+      return foundPlayer;
+    }
 
     //array to hold the selected players, this is updated when the user clicks a competitor
     var selectedPlayers = [];
@@ -75,9 +143,11 @@ angular.module('doublesShieldApp')
         //$scope.defenders = newTeam; //cant do this as it will kill the firebase binding
         $scope.defenders.player1 = selectedPlayers[0];
         $scope.defenders.player2 = selectedPlayers[1];
-        $scope.defenders.$save();
-      } else {
 
+        defenders.player1 = $scope.defenders.player1;
+        defenders.player2 = $scope.defenders.player2;
+        defenders.save();
+      } else {
         var eloHandicap = handicapCalculator.getHandicapElo(selectedPlayers[0].elo, selectedPlayers[1].elo,
           $scope.defenders.player1.elo, $scope.defenders.player2.elo, handicapCalculator.getMaxEloDiff($scope.competitors));
 
@@ -87,7 +157,8 @@ angular.module('doublesShieldApp')
           handicap: eloHandicap
         };
 
-        $scope.challengers.$add(newTeam);
+        $scope.challengers.push(newTeam);
+        challengers.$add(newTeam);
       }
 
       selectedPlayers[0].selected = false;
@@ -96,7 +167,10 @@ angular.module('doublesShieldApp')
     };
 
     $scope.removeTeam = function(teamToRemove){
-      $scope.challengers.$remove(teamToRemove);
+      var teamIndex = $scope.challengers.indexOf(teamToRemove);
+      $scope.challengers.splice(teamIndex, 1);
+      //need to remove by index as we lose the reference on reload
+      challengers.$remove(teamIndex);
     };
 
 
@@ -105,21 +179,27 @@ angular.module('doublesShieldApp')
       $scope.defenders.player1 = challengersTeam.player1;
       $scope.defenders.player2 = challengersTeam.player2;
       $scope.defenders.wins = 0;
-      $scope.defenders.$save();
+
+      defenders.player1 = $scope.defenders.player1;
+      defenders.player2 = $scope.defenders.player2;
+      defenders.wins = 0;
+      defenders.$save();
 
       $scope.removeTeam(challengersTeam);
 
-      //TODO: need to re-calculate all the handicaps for the challengers as the defenders have changed
-      //There probably is a nice fancy $bind/$watch way of doing it
-
+      //There probably is a nice fancy $bind/$watch way of doing this
       $scope.challengers.forEach(function(team){
         team.handicap = handicapCalculator.getHandicapElo(team.player1.elo, team.player2.elo,
           $scope.defenders.player1.elo, $scope.defenders.player2.elo, handicapCalculator.getMaxEloDiff($scope.competitors))
       });
+
+
     };
 
     $scope.challengersLost = function(challengersTeam){
       $scope.defenders.wins++;
+      defenders.wins = $scope.defenders.wins;
+      defenders.$save();
       $scope.removeTeam(challengersTeam)
     }
 

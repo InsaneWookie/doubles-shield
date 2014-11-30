@@ -20,16 +20,21 @@ module.exports = function(config) {
     files: [
       'bower_components/angular/angular.js',
       'bower_components/angular-mocks/angular-mocks.js',
+      "bower_components/angular-route/angular-route.js",
+      "bower_components/firebase/firebase.js",
+      "bower_components/angularfire/dist/angularfire.js",
+      "bower_components/angular-animate/angular-animate.js",
       'app/scripts/**/*.js',
       'test/mock/**/*.js',
       'test/spec/**/*.js'
     ],
 
+
     // list of files / patterns to exclude
     exclude: [],
 
     // web server port
-    port: 8080,
+    port: 8081,
 
     // Start these browsers, currently available:
     // - Chrome
