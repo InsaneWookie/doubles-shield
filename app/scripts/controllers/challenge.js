@@ -90,7 +90,7 @@ angular.module('doublesShieldApp')
 
               //calculate the elo based on the current rivl data
               $scope.challengers.forEach(function(team){
-                team.handicap = handicapCalculator.getHandicapElo(team.player1.elo, team.player1.elo,
+                team.handicap = handicapCalculator.getHandicapElo(team.player1.elo, team.player2.elo,
                   $scope.defenders.player1.elo, $scope.defenders.player2.elo, handicapCalculator.getMaxEloDiff($scope.competitors));
 
               });

@@ -38,12 +38,7 @@ angular.module('doublesShieldApp')
       var teamAElo = (teamAPlayer1Elo * 1) + (teamAPlayer2Elo * 1);
       var teamBElo = (teamBPlayer1Elo * 1) + (teamBPlayer2Elo * 1);
 
-      //only return the handicap for team one
-      if(teamAElo < teamBElo) {
-        return Math.round((teamBElo - teamAElo) / maxEloDiff * MAX_HANDICAP);
-      }
-
-      return 0;
+      return Math.round((teamBElo - teamAElo) / maxEloDiff * MAX_HANDICAP);
     };
 
     this.getMaxRankDiff = function(totalPlayers){
