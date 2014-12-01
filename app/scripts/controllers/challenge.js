@@ -169,8 +169,14 @@ angular.module('doublesShieldApp')
     $scope.removeTeam = function(teamToRemove){
       var teamIndex = $scope.challengers.indexOf(teamToRemove);
       $scope.challengers.splice(teamIndex, 1);
+
       //need to remove by index as we lose the reference on reload
-      challengers.$remove(teamIndex);
+      //need to get the record and see if it exists
+      var firebaeRecord = challengers.$getRecord(challengers.$keyAt(teamIndex));
+      if(firebaeRecord.player1.competitor_id == teamToRemove.player1.competitor_id && firebaeRecord.player2.competitor_id == teamToRemove.player2.competitor_id){
+        challengers.$remove(firebaeRecord);
+      }
+      
     };
 
 
