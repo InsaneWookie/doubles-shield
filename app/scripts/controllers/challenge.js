@@ -73,6 +73,9 @@ angular.module('doublesShieldApp')
       defenders.$loaded()
         .then(function() {
           $scope.defendersLoaded = true;
+          if(!defenders.player1){
+            return;
+          }
           $scope.defenders.player1 = getPlayerById(defenders.player1.competitor_id);
           $scope.defenders.player2 = getPlayerById(defenders.player2.competitor_id);
           $scope.defenders.wins = defenders.wins;
@@ -84,7 +87,8 @@ angular.module('doublesShieldApp')
                 $scope.challengers.push(
                   {
                     player1: getPlayerById(team.player1.competitor_id),
-                    player2: getPlayerById(team.player2.competitor_id)
+                    player2: getPlayerById(team.player2.competitor_id),
+                    name: team.name
                   });
               });
 
@@ -144,9 +148,10 @@ angular.module('doublesShieldApp')
         $scope.defenders.player1 = selectedPlayers[0];
         $scope.defenders.player2 = selectedPlayers[1];
 
+
         defenders.player1 = $scope.defenders.player1;
         defenders.player2 = $scope.defenders.player2;
-        defenders.save();
+        defenders.$save();
       } else {
         var eloHandicap = handicapCalculator.getHandicapElo(selectedPlayers[0].elo, selectedPlayers[1].elo,
           $scope.defenders.player1.elo, $scope.defenders.player2.elo, handicapCalculator.getMaxEloDiff($scope.competitors));
@@ -172,11 +177,12 @@ angular.module('doublesShieldApp')
 
       //need to remove by index as we lose the reference on reload
       //need to get the record and see if it exists
-      var firebaeRecord = challengers.$getRecord(challengers.$keyAt(teamIndex));
-      if(firebaeRecord.player1.competitor_id == teamToRemove.player1.competitor_id && firebaeRecord.player2.competitor_id == teamToRemove.player2.competitor_id){
-        challengers.$remove(firebaeRecord);
+      var firebaseRecord = challengers.$getRecord(challengers.$keyAt(teamIndex));
+      if(firebaseRecord.player1.competitor_id == teamToRemove.player1.competitor_id
+        && firebaseRecord.player2.competitor_id == teamToRemove.player2.competitor_id){
+        challengers.$remove(firebaseRecord);
       }
-      
+
     };
 
 
@@ -207,6 +213,31 @@ angular.module('doublesShieldApp')
       defenders.wins = $scope.defenders.wins;
       defenders.$save();
       $scope.removeTeam(challengersTeam)
-    }
+    };
+
+
+
+    //challenger name edit actions
+
+    //$scope.title = "Welcome to this demo!";
+    $scope.editorEnabled = false;
+
+    $scope.enableEditor = function() {
+      $scope.editorEnabled = true;
+    };
+
+    $scope.disableEditor = function() {
+      $scope.editorEnabled = false;
+    };
+
+    $scope.save = function(team) {
+      var teamIndex = $scope.challengers.indexOf(team);
+      var firebaseRecord = challengers.$getRecord(challengers.$keyAt(teamIndex));
+      firebaseRecord.name = team.name;
+      challengers.$save(firebaseRecord);
+      $scope.disableEditor();
+    };
+
+
 
   });
