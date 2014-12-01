@@ -164,19 +164,19 @@ angular.module('doublesShieldApp')
         playerA1.stat_details.stat_array.forEach(function(opponentStats) {
             if (opponentStats.opponent_id == teamB[0].competitor_id) {
                 if (parseInt(opponentStats.win_num) + parseInt(opponentStats.loss_num) >= 5)
-                  winPercentA1vB1 = opponentStats.win_percent / 100;
+                  winPercentA1vB1 = opponentStats.recent_win_percent / 100;
             } else if (opponentStats.opponent_id == teamB[1].competitor_id) {
                 if (parseInt(opponentStats.win_num) + parseInt(opponentStats.loss_num) >= 5)
-                  winPercentA1vB2 = opponentStats.win_percent / 100;
+                  winPercentA1vB2 = opponentStats.recent_win_percent / 100;
             }
         });
         playerA2.stat_details.stat_array.forEach(function(opponentStats) {
             if (opponentStats.opponent_id == teamB[0].competitor_id) {
                 if (parseInt(opponentStats.win_num) + parseInt(opponentStats.loss_num) >= 5)
-                  winPercentA2vB1 = opponentStats.win_percent / 100;
+                  winPercentA2vB1 = opponentStats.recent_win_percent / 100;
             } else if (opponentStats.opponent_id == teamB[1].competitor_id) {
                 if (parseInt(opponentStats.win_num) + parseInt(opponentStats.loss_num) >= 5)
-                  winPercentA2vB2 = opponentStats.win_percent / 100;
+                  winPercentA2vB2 = opponentStats.recent_win_percent / 100;
             }
         });
 
