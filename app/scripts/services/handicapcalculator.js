@@ -55,7 +55,52 @@ angular.module('doublesShieldApp')
     };
 
     //TODO:
-    this.getTeamWinPercent = function(teamA, teamB){
+    this.getTeamWinPercent = function(defender1StatsDetails, defender2StatsDetails, challenger1Id, challenger2Id,
+                                      eloHandicapTeamA, eloHandicapTeamB, maxEloHandicap){
+      //var teamA = $scope.teamA.filter(getSelectedPlayers);
+      //var teamB = $scope.teamB.filter(getSelectedPlayers);
 
+      //normalise elo diff to somewhere between 0 and 1 where 0.5 means the two teams are even
+      var teamAHandicap = 1 - (((eloHandicapTeamA - eloHandicapTeamB) / maxEloHandicap * 0.5) + 0.5);
+      var winPercentA1vB1 = teamAHandicap;
+      var winPercentA1vB2 = teamAHandicap;
+      var winPercentA2vB1 = teamAHandicap;
+      var winPercentA2vB2 = teamAHandicap;
+
+      defender1StatsDetails.stat_array.forEach(function(opponentStats) {
+        if (opponentStats.opponent_id == challenger1Id) {
+          if (parseInt(opponentStats.win_num) + parseInt(opponentStats.loss_num) >= 5)
+            winPercentA1vB1 = opponentStats.recent_win_percent / 100;
+        } else if (opponentStats.opponent_id == challenger2Id) {
+          if (parseInt(opponentStats.win_num) + parseInt(opponentStats.loss_num) >= 5)
+            winPercentA1vB2 = opponentStats.recent_win_percent / 100;
+        }
+      });
+      defender2StatsDetails.stat_array.forEach(function(opponentStats) {
+        if (opponentStats.opponent_id == challenger1Id) {
+          if (parseInt(opponentStats.win_num) + parseInt(opponentStats.loss_num) >= 5)
+            winPercentA2vB1 = opponentStats.recent_win_percent / 100;
+        } else if (opponentStats.opponent_id == challenger2Id) {
+          if (parseInt(opponentStats.win_num) + parseInt(opponentStats.loss_num) >= 5)
+            winPercentA2vB2 = opponentStats.recent_win_percent / 100;
+        }
+      });
+
+      //get the diffs between handicap and actual win percent for each player combination and average them
+      var teamAWinPercent = (winPercentA1vB1 + winPercentA1vB2 + winPercentA2vB1 + winPercentA2vB2) / 4;
+      var teamWinPredictor = teamAWinPercent - teamAHandicap + 0.5;
+      //$scope.winPercentA = Math.round(teamWinPredictor * 100);
+      //$scope.winPercentB = Math.round((1 - teamWinPredictor) * 100);
+
+      return Math.round((1 - teamWinPredictor) * 100);
+      //
+      //console.log(teamA[0].name + ' v ' + teamB[0].name + ' winPercent: ' + winPercentA1vB1);
+      //console.log(teamA[0].name + ' v ' + teamB[1].name + ' winPercent: ' + winPercentA1vB2);
+      //console.log(teamA[1].name + ' v ' + teamB[0].name + ' winPercent: ' + winPercentA2vB1);
+      //console.log(teamA[1].name + ' v ' + teamB[1].name + ' winPercent: ' + winPercentA2vB2);
+      //console.log('TeamA winPercent: ' + $scope.winPercentA);
+      //console.log('TeamB winPercent: ' + $scope.winPercentB);
+      //console.log('TeamA handicap: ' + teamAHandicap);
     };
+
   });

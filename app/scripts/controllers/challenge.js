@@ -79,6 +79,7 @@ angular.module('doublesShieldApp')
           $scope.defenders.player1 = getPlayerById(defenders.player1.competitor_id);
           $scope.defenders.player2 = getPlayerById(defenders.player2.competitor_id);
           $scope.defenders.wins = defenders.wins;
+          $scope.defenders.name = defenders.name;
 
           //need to do the challengers after the defenders so we can calculate the elo correctly
           challengers.$loaded()
@@ -127,11 +128,30 @@ angular.module('doublesShieldApp')
 
     $scope.selectPlayer = function(player){
       if(player.selected){
+        //if the player is selected, deselect them and remove it from the selected players array
         player.selected = false;
         selectedPlayers.splice(selectedPlayers.indexOf(player), 1);
       } else if(selectedPlayers.length < 2 && !player.selected){
         player.selected = true;
         selectedPlayers.push(player);
+
+        if(selectedPlayers.length === 2){
+          //selected 2 to players so run the maths to show the handicap and expected win percent
+          var def = $scope.defenders;
+          var eloDiff = handicapCalculator.getMaxEloDiff($scope.competitors);
+          $scope.eloHandicap = handicapCalculator.getHandicapElo(selectedPlayers[0].elo, selectedPlayers[1].elo, def.player1.elo, def.player2.elo, eloDiff);
+          $scope.winPercent = 0;
+
+          $http.get(rivlBaseUrl + 'vs_api/competitor_graph?competition_id=2&competitor_id=' + def.player1.competitor_id).success(function(defender1){
+            $http.get(rivlBaseUrl + 'vs_api/competitor_graph?competition_id=2&competitor_id=' + def.player2.competitor_id).success(function(defender2){
+              var defendersHandicap = ($scope.eloHandicap < 0) ? $scope.eloHandicap : 0;
+              var challengersHandicap = ($scope.eloHandicap > 0) ? $scope.eloHandicap : 0;
+              $scope.winPercent = handicapCalculator.getTeamWinPercent(defender1.stat_details, defender2.stat_details,
+                selectedPlayers[0].competitor_id, selectedPlayers[1].competitor_id, defendersHandicap, challengersHandicap, eloDiff);
+            });
+          });
+
+        }
       }
     };
 
@@ -188,12 +208,12 @@ angular.module('doublesShieldApp')
 
     $scope.challengersWon = function(challengersTeam){
       //var currentChallengers = $scope.challengers[0];
-      $scope.defenders.player1 = challengersTeam.player1;
-      $scope.defenders.player2 = challengersTeam.player2;
+      $scope.defenders = challengersTeam;
       $scope.defenders.wins = 0;
 
       defenders.player1 = $scope.defenders.player1;
       defenders.player2 = $scope.defenders.player2;
+      defenders.name = $scope.defenders.name;
       defenders.wins = 0;
       defenders.$save();
 
@@ -219,15 +239,12 @@ angular.module('doublesShieldApp')
 
     //challenger name edit actions
 
-    //$scope.title = "Welcome to this demo!";
-    $scope.editorEnabled = false;
-
-    $scope.enableEditor = function() {
-      $scope.editorEnabled = true;
+    $scope.enableEditor = function(team) {
+      team.editorEnabled = true;
     };
 
-    $scope.disableEditor = function() {
-      $scope.editorEnabled = false;
+    $scope.disableEditor = function(team) {
+      team.editorEnabled = false;
     };
 
     $scope.save = function(team) {
@@ -235,7 +252,7 @@ angular.module('doublesShieldApp')
       var firebaseRecord = challengers.$getRecord(challengers.$keyAt(teamIndex));
       firebaseRecord.name = team.name;
       challengers.$save(firebaseRecord);
-      $scope.disableEditor();
+      $scope.disableEditor(team);
     };
 
 
