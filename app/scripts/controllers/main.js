@@ -22,10 +22,7 @@ angular.module('doublesShieldApp')
     $scope.teamA = [];
     $scope.teamB = [];
 
-    $scope.maxHandicap = 7; //don't want to exceed 8 as a max handicap
-    $scope.maxRank;
-    $scope.maxRankDiff;
-    $scope.maxEloDiff;
+    $scope.maxHandicap = 8; //don't want to exceed 8 as a max handicap
 
     $http.get(rivlBaseUrl + 'vs_api/competition/competitors?competition_id=2').success(function(competitors){
 
@@ -40,12 +37,6 @@ angular.module('doublesShieldApp')
       $scope.teamA = activeCompetitors.sort(function(a,b){ return a.activeRank - b.activeRank; });
 
       $scope.teamB = angular.copy(activeCompetitors);
-
-      //calculate max rank and elo diffs (assume $scope.teamA is already ordered by rank and has more than 2 active players)
-      $scope.maxRank = $scope.teamA.length;
-      $scope.maxRankDiff = ($scope.maxRank + $scope.maxRank - 1) - (1+2) + 1;
-      $scope.maxEloDiff = (parseFloat($scope.teamA[0].elo) + parseFloat($scope.teamA[1].elo))
-                            - (parseFloat($scope.teamA[$scope.maxRank-2].elo) + parseFloat($scope.teamA[$scope.maxRank-1].elo) - 100);
 
     });
 
@@ -103,28 +94,37 @@ angular.module('doublesShieldApp')
       var teamAElo = 0;
       var teamBElo = 0;
 
+      var allPlayers = $scope.teamA;
       var teamA = $scope.teamA.filter(getSelectedPlayers);
       var teamB = $scope.teamB.filter(getSelectedPlayers);
+
+      //calculate max rank and elo diffs (assume $scope.teamA is already ordered by rank and has more than 2 active players)
+      var maxRank = allPlayers.length;
+      var maxRankDiff = (maxRank + maxRank - 1) - (1+2) + 1;
+
+      var maxEloDiff = (parseFloat(allPlayers[0].elo) + parseFloat(allPlayers[1].elo))
+                            - (parseFloat(allPlayers[maxRank-2].elo) + parseFloat(allPlayers[maxRank-1].elo));
+
 
       //assumes teams have already been sorted by rank
       teamARank = teamA[0].activeRank + teamA[1].activeRank;
       teamBRank = teamB[0].activeRank + teamB[1].activeRank;
 
-      teamAElo = (parseFloat(teamA[0].elo) * 1) + (parseFloat(teamA[1].elo) * 1);
-      teamBElo = (parseFloat(teamB[0].elo) * 1) + (parseFloat(teamB[1].elo) * 1);
+      teamAElo = parseFloat(teamA[0].elo) + parseFloat(teamA[1].elo);
+      teamBElo = parseFloat(teamB[0].elo) + parseFloat(teamB[1].elo);
 
       if(teamARank < teamBRank){
-        $scope.rankHandicapB = Math.round((teamBRank - teamARank) / $scope.maxRankDiff * $scope.maxHandicap);
+        $scope.rankHandicapB = Math.round((teamBRank - teamARank) / maxRankDiff * $scope.maxHandicap);
         $scope.rankHandicapA = 0;
       } else {
-        $scope.rankHandicapA = Math.round((teamARank - teamBRank) / $scope.maxRankDiff * $scope.maxHandicap);
+        $scope.rankHandicapA = Math.round((teamARank - teamBRank) / maxRankDiff * $scope.maxHandicap);
         $scope.rankHandicapB = 0;
       }
       if(teamAElo > teamBElo){
-        $scope.eloHandicapB = Math.round((teamAElo - teamBElo) / $scope.maxEloDiff * $scope.maxHandicap);
+        $scope.eloHandicapB = Math.round((teamAElo - teamBElo) / maxEloDiff * $scope.maxHandicap);
         $scope.eloHandicapA = 0;
       } else {
-        $scope.eloHandicapA = Math.round((teamBElo - teamAElo) / $scope.maxEloDiff * $scope.maxHandicap);
+        $scope.eloHandicapA = Math.round((teamBElo - teamAElo) / maxEloDiff * $scope.maxHandicap);
         $scope.eloHandicapB = 0;
       }
 
