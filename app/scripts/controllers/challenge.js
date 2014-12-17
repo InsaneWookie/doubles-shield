@@ -15,7 +15,7 @@ angular.module('doublesShieldApp')
 
     $scope.challengers = [];
     $scope.defenders = {
-      name: null,
+      name: '',
       wins: 0
     };
 
@@ -155,7 +155,7 @@ angular.module('doublesShieldApp')
         defenders.player1 = $scope.defenders.player1;
         defenders.player2 = $scope.defenders.player2;
         defenders.wins = 0;
-        defenders.name = null;
+        defenders.name = '';
         defenders.$save();
       } else {
         var eloHandicap = handicapCalculator.getHandicapElo(selectedPlayers[0].elo, selectedPlayers[1].elo,
@@ -165,7 +165,7 @@ angular.module('doublesShieldApp')
           player1: selectedPlayers[0],
           player2: selectedPlayers[1],
           handicap: eloHandicap,
-          name: null
+          name: ''
         };
 
         $scope.challengers.push(newTeam);
@@ -221,8 +221,8 @@ angular.module('doublesShieldApp')
       $scope.defenders.wins++;
       defenders.wins = $scope.defenders.wins;
 
-      defenders.name = (!defenders.name) ? null : defenders.name;
-      challengersTeam.name = (!challengersTeam.name) ? null : challengersTeam.name;
+      defenders.name = (!defenders.name) ? '' : defenders.name;
+      challengersTeam.name = (!challengersTeam.name) ? '' : challengersTeam.name;
 
       defenders.$save();
 
